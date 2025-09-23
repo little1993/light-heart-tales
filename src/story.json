@@ -1,0 +1,58 @@
+[
+  {
+    "id": "scene1",
+    "bg": "bg/scene1.png",
+    "text": "阳光洒进镜之森林，小狐狸莱恩和小兔子米拉走在小径上。忽然，一只小鸟被黑雾包围，冷冷地说：'这片食物都是我的！'",
+    "choices": [
+      {
+        "label": "和小鸟争抢食物",
+        "next": "scene1_bad",
+        "feedback": "小鸟愤怒尖叫，黑雾更浓！"
+      },
+      {
+        "label": "把蘑菇递给小鸟",
+        "next": "scene2",
+        "feedback": "小鸟愣住了，黑雾微微散开。"
+      }
+    ]
+  },
+  {
+    "id": "scene1_bad",
+    "bg": "bg/scene1.png",
+    "text": "黑雾加重了，米拉喊道：'不要这样！我们需要别的办法！'",
+    "choices": [
+      { "label": "重新选择", "next": "scene1" }
+    ]
+  },
+  {
+    "id": "scene2",
+    "bg": "bg/scene2.png",
+    "text": "小鸟飞走了，可很快它被藤蔓缠住，拼命挣扎。",
+    "choices": [
+      {
+        "label": "转身离开",
+        "next": "scene2_bad",
+        "feedback": "他们离开了，但米拉心里很难过，黑雾蔓延开来。"
+      },
+      {
+        "label": "救小鸟",
+        "next": "scene3",
+        "feedback": "莱恩小心撕开藤蔓，小鸟渐渐安静，黑雾消散。"
+      }
+    ]
+  },
+  {
+    "id": "scene2_bad",
+    "bg": "bg/scene2.png",
+    "text": "他们离开后，森林的黑雾迅速蔓延，将小径吞没。莱恩的心像石头一样沉。",
+    "choices": [
+      { "label": "回头帮助", "next": "scene2" }
+    ]
+  },
+  {
+    "id": "scene3",
+    "bg": "bg/scene3.png",
+    "text": "小鸟恢复正常，胸口升起一颗晶莹的宝石——第一颗光之心！",
+    "choices": []
+  }
+]
