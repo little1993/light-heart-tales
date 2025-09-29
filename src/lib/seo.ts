@@ -1,4 +1,4 @@
-const DEFAULT_SITE_URL = "https://light-heart-tales.example.com";
+const DEFAULT_SITE_URL = "https://light-heart-tales.vercel.app";
 
 const sanitizedEnvUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
