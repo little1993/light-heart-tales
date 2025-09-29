@@ -31,5 +31,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: scene.id === story[0]?.id ? 0.9 : 0.8
   }));
 
-  return [...new Map([...staticRoutes, ...storyRoutes].map((item) => [item.url, item])).values()];
+  const mergedRoutes = [...staticRoutes, ...storyRoutes];
+  const uniqueRoutes: MetadataRoute.Sitemap = [];
+  const seenUrls: Record<string, true> = {};
+
+  for (const route of mergedRoutes) {
+    if (seenUrls[route.url]) {
+      continue;
+    }
+
+    seenUrls[route.url] = true;
+    uniqueRoutes.push(route);
+  }
+
+  return uniqueRoutes;
 }
