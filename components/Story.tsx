@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChoiceButton } from "@/components/ChoiceButton";
 
 export type StoryChoice = {
@@ -12,8 +14,10 @@ export type StoryChoice = {
 
 export type StoryScene = {
   id: string;
+  title?: string;
   text: string;
   bg: string;
+  imageAlt?: string;
   choices: StoryChoice[];
 };
 
@@ -90,6 +94,18 @@ export function Story({ story, initialSceneId }: StoryProps) {
   }, [currentSceneId]);
 
   const currentScene = scenesById.get(currentSceneId) ?? story[0];
+  const isFirstScene = currentScene?.id === firstSceneId;
+  const headingId = currentScene ? `scene-heading-${currentScene.id}` : "scene-heading";
+  const descriptionId = `${headingId}-description`;
+  const currentSceneTitle = currentScene?.title ?? "光之心森林冒险互动故事";
+
+  const narrativeParagraphs = useMemo(() => {
+    const raw = currentScene?.text ?? "";
+    return raw
+      .split(/(?<=[。！？!?])/u)
+      .map((segment) => segment.trim())
+      .filter(Boolean);
+  }, [currentScene?.text]);
 
   const handleChoice = useCallback(
     (choice: StoryChoice) => {
@@ -127,36 +143,68 @@ export function Story({ story, initialSceneId }: StoryProps) {
   }
 
   return (
-    <div className="story-shell">
-      <div
-        key={currentScene.bg}
-        className="background-image"
-        style={{ backgroundImage: `url(/${currentScene.bg})` }}
-        aria-hidden="true"
-      />
+    <section
+      className="story-shell"
+      role="region"
+      aria-labelledby={headingId}
+      aria-describedby={descriptionId}
+    >
+      <figure className="background-image" aria-hidden="true">
+        <Image
+          key={currentScene.bg}
+          src={`/${currentScene.bg}`}
+          alt={currentScene.imageAlt ?? `${currentSceneTitle}场景插画`}
+          fill
+          sizes="100vw"
+          priority={isFirstScene}
+          loading={isFirstScene ? "eager" : "lazy"}
+        />
+      </figure>
       <div className="overlay" />
-      <div className="content" key={currentScene.id}>
-        <div className="scene-text">{currentScene.text}</div>
+      <article className="content" key={currentScene.id}>
+        <header className="scene-header">
+          <p className="scene-kicker">光之心森林冒险</p>
+          <h1 id={headingId} className="scene-heading">
+            {currentSceneTitle}
+          </h1>
+        </header>
+        <div id={descriptionId} className="scene-text">
+          {narrativeParagraphs.length > 0 ? (
+            narrativeParagraphs.map((paragraph, index) => (
+              <p key={`${currentScene.id}-paragraph-${index}`}>{paragraph}</p>
+            ))
+          ) : (
+            <p>{currentScene?.text}</p>
+          )}
+        </div>
         <div className="feedback" aria-live="polite">
           {feedback}
         </div>
-        <div className="choices">
+        <nav className="choices" aria-label="故事分支选择">
           {currentScene.choices.length > 0 ? (
             currentScene.choices.map((choice) => (
               <ChoiceButton
                 key={`${currentScene.id}-${choice.label}`}
                 label={choice.label}
+                ariaLabel={`选择动作：${choice.label}`}
                 onClick={() => handleChoice(choice)}
                 disabled={isLocked}
               />
             ))
           ) : (
-            <div className="scene-text">
+            <div className="scene-text" role="status">
               冒险暂时告一段落啦，请期待下一集！
             </div>
           )}
-        </div>
-      </div>
-    </div>
+        </nav>
+        <footer className="story-footer" aria-label="延伸阅读">
+          <p className="story-footer__title">想了解故事背后的教育理念？</p>
+          <div className="story-footer__links">
+            <Link href="/parents-guide">阅读家长指南</Link>
+            <Link href="/about">认识创作团队</Link>
+          </div>
+        </footer>
+      </article>
+    </section>
   );
 }

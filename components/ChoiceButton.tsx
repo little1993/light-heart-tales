@@ -4,15 +4,17 @@ type ChoiceButtonProps = {
   label: string;
   disabled?: boolean;
   onClick: () => void;
+  ariaLabel?: string;
 };
 
-export function ChoiceButton({ label, disabled, onClick }: ChoiceButtonProps) {
+export function ChoiceButton({ label, disabled, onClick, ariaLabel }: ChoiceButtonProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
       className="choice-button"
-      aria-disabled={disabled}
+      aria-label={ariaLabel ?? label}
     >
       {label}
       <style jsx>{`
@@ -35,12 +37,16 @@ export function ChoiceButton({ label, disabled, onClick }: ChoiceButtonProps) {
           background: rgba(255, 220, 120, 0.3);
         }
 
+        .choice-button:focus-visible {
+          outline: 3px solid rgba(255, 223, 107, 0.9);
+          outline-offset: 2px;
+        }
+
         .choice-button:active {
           transform: translateY(1px);
         }
 
-        .choice-button:disabled,
-        .choice-button[aria-disabled="true"] {
+        .choice-button:disabled {
           cursor: not-allowed;
           opacity: 0.6;
           transform: none;
