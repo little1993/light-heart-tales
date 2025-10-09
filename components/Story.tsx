@@ -27,6 +27,8 @@ type StoryProps = {
 };
 
 const STORAGE_KEY = "light-heart-tales-progress";
+const HISTORY_KEY = "light-heart-tales-history";
+const CLEANUP_FLAG = "light-heart-tales-storage-cleaned";
 const FEEDBACK_DELAY = 1500;
 
 export function Story({ story, initialSceneId }: StoryProps) {
@@ -57,6 +59,23 @@ export function Story({ story, initialSceneId }: StoryProps) {
   const [isLocked, setIsLocked] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hydratedRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      const alreadyCleaned = window.localStorage.getItem(CLEANUP_FLAG);
+      if (!alreadyCleaned) {
+        window.localStorage.removeItem(HISTORY_KEY);
+        window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.setItem(CLEANUP_FLAG, "true");
+      }
+    } catch (error) {
+      console.warn("Failed to clean legacy story storage", error);
+    }
+  }, []);
 
   useEffect(() => {
     return () => {
